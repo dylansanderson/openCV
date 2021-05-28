@@ -10,17 +10,16 @@ Try your built-in camera with 'cap = cv2.VideoCapture(0)' or use any video. cap 
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 eye_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_eye.xml')
 smile = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_smile.xml')
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture("face.mp4")
 font = cv2.FONT_HERSHEY_SIMPLEX
 
 prev_frame_time, new_frame_time = 0,0
 while 1:
     ret, img = cap.read()
     img = cv2.resize(img,(640,480))
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    faces = face_cascade.detectMultiScale(gray, 1.09, 5)
-    eyes = eye_cascade.detectMultiScale(gray,1.09,4)
-    smiles = smile.detectMultiScale(gray,1.09,15)
+    faces = face_cascade.detectMultiScale(img, 1.1, 5)
+    eyes = eye_cascade.detectMultiScale(img,1.1,6)
+    smiles = smile.detectMultiScale(img,1.1,100)
 
     new_frame = time.time()
     fps = 1/(new_frame_time-prev_frame_time + 1)
@@ -35,10 +34,8 @@ while 1:
     for (x,y,w,h) in faces:
         cv2.rectangle(img,(x,y),(x+w,y+h),(255,0,0),2)
         cv2.putText(img,"FACE",(int(x-.1*x),int(y-.1*y)),font,1,(255,255,255),2)
-        roi_gray = gray[y:y+h, x:x+w]
         roi_color = img[y:y+h, x:x+w]
-        
-        eyes = eye_cascade.detectMultiScale(roi_gray)
+        eyes = eye_cascade.detectMultiScale(roi_color)
         for (ex,ey,ew,eh) in eyes:
             cv2.rectangle(roi_color,(ex,ey),(ex+ew,ey+eh),(0,255,0),2)
     
